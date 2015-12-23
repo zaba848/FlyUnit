@@ -1,6 +1,6 @@
 [PreviousGenFiles]
-HeaderPath=D:/panekT/FlyUnit/FlyUnit/Inc
-SourcePath=D:/panekT/FlyUnit/FlyUnit/Src
+HeaderPath=C:/Users/User/git/FlyUnit/FlyUnit/FlyUnit/Inc
+SourcePath=C:/Users/User/git/FlyUnit/FlyUnit/FlyUnit/Src
 SourceFiles=gpio.h;tim.h;usart.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;mxconstants.h;gpio.c;tim.c;usart.c;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;
 HeaderFiles=gpio.h;tim.h;usart.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;mxconstants.h;
 

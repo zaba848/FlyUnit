@@ -12,7 +12,7 @@ int main(void)
 	SystemClock_Config();
 
 	MX_GPIO_Init();
-	MX_TIM1_Init();
+	MX_TIM3_Init();
 	MX_USART2_UART_Init();
 
   char printBuffer[40];
@@ -20,13 +20,13 @@ int main(void)
 //	HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_ALL);
 
 
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
 
 
-	  sprintf(printBuffer,"%s ","test");
+	  sprintf(printBuffer,"%s ","test\n");
 	  send(printBuffer);
   while (1)
   {
@@ -49,9 +49,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = 16;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 16;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 84;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
@@ -70,11 +70,11 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
-
 #ifdef USE_FULL_ASSERT
+
 void assert_failed(uint8_t* file, uint32_t line)
 {
- printf("Wrong parameters value: file %s on line %d\r\n", file, line) ;
+printf("Wrong parameters value: file %s on line %d\r\n", file, line) ;
 
 
 }

@@ -42,12 +42,26 @@
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USART2 init function */
 
 void send(char c[]) {
 	HAL_UART_Transmit(&huart2, (uint8_t*) c, strlen(c), 0xFFFF);
 
+}
+
+void recive(char c[]) {
+	HAL_UART_Receive(&huart2,(uint8_t*) c,sizeof(uint8_t),0xFFFF);
+}
+
+void sendInt(uint8_t c[]) {
+	HAL_UART_Transmit(&huart2, c, strlen(c), 0xFFFF);
+
+}
+
+void reciveInt(uint8_t* c) {
+	HAL_UART_Receive(&huart2, c,sizeof(uint8_t),0xFFFF);
 }
 
 void MX_USART2_UART_Init(void) {
@@ -77,16 +91,38 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart) {
 		;
 
 		/**USART2 GPIO Configuration
-		 PD5     ------> USART2_TX
-		 PD6     ------> USART2_RX
+		 PA2     ------> USART2_TX
+		 PA3     ------> USART2_RX
 		 */
 		GPIO_InitStruct.Pin = USART_TX_Pin | USART_RX_Pin;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 		GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
-		HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+		/* Peripheral DMA init*/
+
+		hdma_usart2_rx.Instance = DMA1_Stream5;
+		hdma_usart2_rx.Init.Channel = DMA_CHANNEL_4;
+		hdma_usart2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+		hdma_usart2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+		hdma_usart2_rx.Init.MemInc = DMA_MINC_ENABLE;
+		hdma_usart2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+		hdma_usart2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+		hdma_usart2_rx.Init.Mode = DMA_CIRCULAR;
+		hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
+		hdma_usart2_rx.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+		hdma_usart2_rx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+		hdma_usart2_rx.Init.MemBurst = DMA_MBURST_SINGLE;
+		hdma_usart2_rx.Init.PeriphBurst = DMA_PBURST_SINGLE;
+		HAL_DMA_Init(&hdma_usart2_rx);
+
+		__HAL_LINKDMA(huart, hdmarx, hdma_usart2_rx);
+
+		/* Peripheral interrupt init*/
+		HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(USART2_IRQn);
 		/* USER CODE BEGIN USART2_MspInit 1 */
 
 		/* USER CODE END USART2_MspInit 1 */
@@ -103,15 +139,31 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart) {
 		__USART2_CLK_DISABLE();
 
 		/**USART2 GPIO Configuration
-		 PD5     ------> USART2_TX
-		 PD6     ------> USART2_RX
+		 PA2     ------> USART2_TX
+		 PA3     ------> USART2_RX
 		 */
-		HAL_GPIO_DeInit(GPIOD, USART_TX_Pin | USART_RX_Pin);
+		HAL_GPIO_DeInit(GPIOA, USART_TX_Pin | USART_RX_Pin);
+
+		/* Peripheral DMA DeInit*/
+		HAL_DMA_DeInit(huart->hdmarx);
+
+		/* Peripheral interrupt Deinit*/
+		HAL_NVIC_DisableIRQ(USART2_IRQn);
 
 	}
 	/* USER CODE BEGIN USART2_MspDeInit 1 */
 
 	/* USER CODE END USART2_MspDeInit 1 */
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if(huart->Instance == USART2)
+  {
+
+
+  }
+
 }
 
 /* USER CODE BEGIN 1 */

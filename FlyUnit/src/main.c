@@ -1,5 +1,6 @@
 #include "stm32f4xx_hal.h"
 #include "tim.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -12,6 +13,8 @@ int main(void)
 	SystemClock_Config();
 
 	MX_GPIO_Init();
+	MX_DMA_Init();
+
 	MX_TIM3_Init();
 	MX_USART2_UART_Init();
 
@@ -28,8 +31,16 @@ int main(void)
 
 	  sprintf(printBuffer,"%s ","test\n");
 	  send(printBuffer);
+
   while (1)
   {
+	  recive(printBuffer);
+	  if(printBuffer != " ")
+	  {
+		  send(printBuffer);
+	  }
+	  sprintf(printBuffer," ");
+//	  if(rea)
   }
 
 }

@@ -1,8 +1,17 @@
-#include "stm32f4xx_hal.h"
-#include "tim.h"
-#include "dma.h"
-#include "usart.h"
-#include "gpio.h"
+#include <dma.h>
+#include <gpio.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stm32_hal_legacy.h>
+#include <stm32f401xe.h>
+#include <stm32f4xx_hal.h>
+#include <stm32f4xx_hal_cortex.h>
+#include <stm32f4xx_hal_flash_ex.h>
+#include <stm32f4xx_hal_pwr_ex.h>
+#include <stm32f4xx_hal_rcc.h>
+#include <stm32f4xx_hal_tim.h>
+#include <tim.h>
+#include <usart.h>
 
 void SystemClock_Config(void);
 
@@ -17,6 +26,7 @@ int main(void)
 
 	MX_TIM3_Init();
 	MX_USART2_UART_Init();
+	MX_USART6_UART_Init();
 
   char printBuffer[40];
 //	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_ALL);
@@ -30,16 +40,17 @@ int main(void)
 
 
 	  sprintf(printBuffer,"%s ","test\n");
-	  send(printBuffer);
+	  send_USB(printBuffer);
 
   while (1)
   {
 	  recive(printBuffer);
+//	  HAL_Delay(10);
 	  if(printBuffer != " ")
 	  {
-		  send(printBuffer);
-	  }
+		  send_USB(printBuffer);
 	  sprintf(printBuffer," ");
+	  }
 //	  if(rea)
   }
 

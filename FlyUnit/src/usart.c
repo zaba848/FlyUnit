@@ -42,26 +42,36 @@
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart2_rx;
+UART_HandleTypeDef huart6;
+DMA_HandleTypeDef hdma_usart6_rx;
 
 /* USART2 init function */
 
-void send(char c[]) {
+void send_USB(char c[]) {
 	HAL_UART_Transmit(&huart2, (uint8_t*) c, strlen(c), 0xFFFF);
 
 }
 
+void recive_USB(char c[]) {
+	HAL_UART_Receive(&huart2, (uint8_t*) c, sizeof(uint8_t), 0xFFFF);
+}
+
+void send(char c[]) {
+	HAL_UART_Transmit(&huart6, (uint8_t*) c, strlen(c), 0xFFFF);
+
+}
+
 void recive(char c[]) {
-	HAL_UART_Receive(&huart2,(uint8_t*) c,sizeof(uint8_t),0xFFFF);
+	HAL_UART_Receive(&huart6, (uint8_t*) c, sizeof(uint8_t), 0xFFFF);
 }
 
 void sendInt(uint8_t c[]) {
-	HAL_UART_Transmit(&huart2, c, strlen(c), 0xFFFF);
+	HAL_UART_Transmit(&huart6, c, strlen(c), 0xFFFF);
 
 }
 
 void reciveInt(uint8_t* c) {
-	HAL_UART_Receive(&huart2, c,sizeof(uint8_t),0xFFFF);
+	HAL_UART_Receive(&huart6, c, sizeof(uint8_t), 0xFFFF);
 }
 
 void MX_USART2_UART_Init(void) {
@@ -76,6 +86,20 @@ void MX_USART2_UART_Init(void) {
 	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
 	HAL_UART_Init(&huart2);
+
+}
+
+void MX_USART6_UART_Init(void) {
+
+	huart6.Instance = USART6;
+	huart6.Init.BaudRate = 115200;
+	huart6.Init.WordLength = UART_WORDLENGTH_8B;
+	huart6.Init.StopBits = UART_STOPBITS_1;
+	huart6.Init.Parity = UART_PARITY_NONE;
+	huart6.Init.Mode = UART_MODE_TX_RX;
+	huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+	HAL_UART_Init(&huart6);
 
 }
 
@@ -94,38 +118,57 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart) {
 		 PA2     ------> USART2_TX
 		 PA3     ------> USART2_RX
 		 */
-		GPIO_InitStruct.Pin = USART_TX_Pin | USART_RX_Pin;
+		GPIO_InitStruct.Pin = USART_TX_Pin_USB | USART_RX_Pin_USB;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 		GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	}
+	if (huart->Instance == USART6) {
+		/* USER CODE BEGIN USART6_MspInit 0 */
+
+		/* USER CODE END USART6_MspInit 0 */
+		/* Peripheral clock enable */
+		__USART6_CLK_ENABLE()
+		;
+
+		/**USART6 GPIO Configuration
+		 PC6     ------> USART6_TX
+		 PC7     ------> USART6_RX
+		 */
+		GPIO_InitStruct.Pin = USART_TX_Pin | USART_RX_Pin;
+		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+		GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
+		HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 		/* Peripheral DMA init*/
 
-		hdma_usart2_rx.Instance = DMA1_Stream5;
-		hdma_usart2_rx.Init.Channel = DMA_CHANNEL_4;
-		hdma_usart2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-		hdma_usart2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-		hdma_usart2_rx.Init.MemInc = DMA_MINC_ENABLE;
-		hdma_usart2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-		hdma_usart2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-		hdma_usart2_rx.Init.Mode = DMA_CIRCULAR;
-		hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
-		hdma_usart2_rx.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-		hdma_usart2_rx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-		hdma_usart2_rx.Init.MemBurst = DMA_MBURST_SINGLE;
-		hdma_usart2_rx.Init.PeriphBurst = DMA_PBURST_SINGLE;
-		HAL_DMA_Init(&hdma_usart2_rx);
+		hdma_usart6_rx.Instance = DMA2_Stream1;
+		hdma_usart6_rx.Init.Channel = DMA_CHANNEL_5;
+		hdma_usart6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+		hdma_usart6_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+		hdma_usart6_rx.Init.MemInc = DMA_MINC_ENABLE;
+		hdma_usart6_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+		hdma_usart6_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+		hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
+		hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
+		hdma_usart6_rx.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+		hdma_usart6_rx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+		hdma_usart6_rx.Init.MemBurst = DMA_MBURST_SINGLE;
+		hdma_usart6_rx.Init.PeriphBurst = DMA_PBURST_SINGLE;
+		HAL_DMA_Init(&hdma_usart6_rx);
 
-		__HAL_LINKDMA(huart, hdmarx, hdma_usart2_rx);
+		__HAL_LINKDMA(huart, hdmarx, hdma_usart6_rx);
 
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
-		HAL_NVIC_EnableIRQ(USART2_IRQn);
-		/* USER CODE BEGIN USART2_MspInit 1 */
+		HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(USART6_IRQn);
+		/* USER CODE BEGIN USART6_MspInit 1 */
 
-		/* USER CODE END USART2_MspInit 1 */
+		/* USER CODE END USART6_MspInit 1 */
 	}
 }
 
@@ -142,7 +185,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart) {
 		 PA2     ------> USART2_TX
 		 PA3     ------> USART2_RX
 		 */
-		HAL_GPIO_DeInit(GPIOA, USART_TX_Pin | USART_RX_Pin);
+		HAL_GPIO_DeInit(GPIOA, USART_TX_Pin_USB | USART_RX_Pin_USB);
 
 		/* Peripheral DMA DeInit*/
 		HAL_DMA_DeInit(huart->hdmarx);
@@ -150,21 +193,36 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart) {
 		/* Peripheral interrupt Deinit*/
 		HAL_NVIC_DisableIRQ(USART2_IRQn);
 
+	} else if (huart->Instance == USART6) {
+		/* USER CODE BEGIN USART6_MspDeInit 0 */
+
+		/* USER CODE END USART6_MspDeInit 0 */
+		/* Peripheral clock disable */
+		__USART6_CLK_DISABLE();
+
+		/**USART6 GPIO Configuration
+		 PC6     ------> USART6_TX
+		 PC7     ------> USART6_RX
+		 */
+		HAL_GPIO_DeInit(GPIOC, USART_TX_Pin | USART_RX_Pin);
+
+		/* Peripheral DMA DeInit*/
+		HAL_DMA_DeInit(huart->hdmarx);
+
+		/* Peripheral interrupt Deinit*/
+		HAL_NVIC_DisableIRQ(USART6_IRQn);
+
 	}
-	/* USER CODE BEGIN USART2_MspDeInit 1 */
-
-	/* USER CODE END USART2_MspDeInit 1 */
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  if(huart->Instance == USART2)
-  {
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART6) {
 
-
-  }
+	}
 
 }
+
+/* USART6 init function */
 
 /* USER CODE BEGIN 1 */
 

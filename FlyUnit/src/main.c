@@ -28,7 +28,7 @@ int main(void)
 	MX_USART2_UART_Init();
 	MX_USART6_UART_Init();
 
-  char printBuffer[40];
+  char printBuffer[400];
 //	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_ALL);
 //	HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_ALL);
 
@@ -39,7 +39,7 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
 
 
-	  sprintf(printBuffer,"%s ","test\n");
+	  sprintf(printBuffer,"%s ","setart reciving\n");
 	  send_USB(printBuffer);
 
   while (1)
@@ -49,7 +49,7 @@ int main(void)
 	  if(printBuffer != " ")
 	  {
 		  send_USB(printBuffer);
-	  sprintf(printBuffer," ");
+		  sprintf(printBuffer," ");
 	  }
 //	  if(rea)
   }

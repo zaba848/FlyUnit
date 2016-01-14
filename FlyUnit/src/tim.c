@@ -35,20 +35,23 @@
 /* Includes ------------------------------------------------------------------*/
 #include "tim.h"
 
-#include "gpio.h"
+
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim3;
+  TIM_OC_InitTypeDef sConfigOC;
+  uint8_t angL;
+  uint8_t angR;
+
 
 /* TIM3 init function */
 void MX_TIM3_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
   TIM_MasterConfigTypeDef sMasterConfig;
-  TIM_OC_InitTypeDef sConfigOC;
 
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 839;
@@ -70,21 +73,84 @@ void MX_TIM3_Init(void)
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
 
-
-  sConfigOC.Pulse = 111;
+//	80 140 200
+  sConfigOC.Pulse = 80;
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
 
-  sConfigOC.Pulse = 102;
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
+//  sConfigOC.Pulse = 102;
+//  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
 
-  sConfigOC.Pulse = 152;
+  sConfigOC.Pulse = 200;
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
 
-  sConfigOC.Pulse = 152;
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
+//  sConfigOC.Pulse = 152;
+//  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
 
   HAL_TIM_Base_MspInit(&htim3);
 
+}
+
+void serwoControl(int8_t X, int8_t Y)
+{
+	if(Y > 60)	// zabezpiecznie
+	{
+		Y = 60;
+	}
+	if(Y < -60)
+	{
+		Y = -60;
+	}
+
+
+	angL = (Y + 140)+X;
+	angR = ((Y * -1) + 140)+X;
+
+	if(angL > 200)	// zabezpiecznie
+	{
+		angL = 200;
+	}else
+	if(angL < 80)
+	{
+		angL = 80;
+	}
+
+	if(angR > 200)	// zabezpiecznie
+	{
+		angR = 200;
+	}else
+	if(angR < 80)
+	{
+		angR = 80;
+	}
+
+	serwoAngle(SS_LEWE, angL);
+	serwoAngle(SS_PRAWE, angR);
+}
+
+
+void serwoAngle(SSerwo serwo, int8_t angle)
+{
+
+
+
+	switch(serwo)
+	{
+	case SS_LEWE:
+	{
+		sConfigOC.Pulse = angL;
+		HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+
+	}break;
+	case SS_PRAWE:
+	{
+		sConfigOC.Pulse = angR;
+		HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
+		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+
+
+	}break;
+	}
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
@@ -98,21 +164,21 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM3_MspInit 0 */
     /* Peripheral clock enable */
     __TIM3_CLK_ENABLE();
-  
+
     /**TIM3 GPIO Configuration
     PA6     ------> TIM3_CH1
     PA7     ------> TIM3_CH2
     PB0     ------> TIM3_CH3
     PB1     ------> TIM3_CH4
     */
-    GPIO_InitStruct.Pin = PWM_CH1_Pin|PWM_CH2_Pin;
+    GPIO_InitStruct.Pin = PWM_CH1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = PWM_CH3_Pin|PWM_CH4_Pin;
+    GPIO_InitStruct.Pin = PWM_CH3_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
@@ -135,12 +201,12 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM3_MspDeInit 0 */
     /* Peripheral clock disable */
     __TIM3_CLK_DISABLE();
-  
+
     /**TIM3 GPIO Configuration
-    PA6     ------> TIM3_CH1
-    PA7     ------> TIM3_CH2
-    PB0     ------> TIM3_CH3
-    PB1     ------> TIM3_CH4
+    PA6     ------> TIM3_CH1 	// lewe A3
+//    PA7     ------> TIM3_CH2
+    PB0     ------> TIM3_CH3	// prawe D13
+//    PB1     ------> TIM3_CH4
     */
     HAL_GPIO_DeInit(GPIOA, PWM_CH1_Pin|PWM_CH2_Pin);
 
@@ -150,7 +216,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE BEGIN TIM3_MspDeInit 1 */
 
   /* USER CODE END TIM3_MspDeInit 1 */
-} 
+}
 
 /* USER CODE BEGIN 1 */
 

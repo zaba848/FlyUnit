@@ -38,36 +38,28 @@
  extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "gpio.h"
 
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
+ typedef enum
+ {
+	 SS_LEWE,
+	 SS_PRAWE,
+ }SSerwo;
 
 extern TIM_HandleTypeDef htim3;
+TIM_OC_InitTypeDef sConfigOC;
+uint8_t angL;
+uint8_t angR;
 
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
 
 void MX_TIM3_Init(void);
+void serwoAngle(SSerwo serwo, int8_t angle);
+void serwoControl(int8_t X, int8_t Y);
 
-/* USER CODE BEGIN Prototypes */
-
-/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 #endif /*__ tim_H */
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -12,6 +12,9 @@
 #include <stm32f4xx_hal_tim.h>
 #include <tim.h>
 #include <usart.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void SystemClock_Config(void);
 
@@ -28,29 +31,70 @@ int main(void)
 	MX_USART2_UART_Init();
 	MX_USART6_UART_Init();
 
-  char printBuffer[400];
+
+
+  char printBuffer[20];
+  char readed[3];
 //	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_ALL);
 //	HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_ALL);
 
 
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+//	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+//	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+
+	uint8_t angleLeft = 0;
+	uint8_t angleRight = 0;
 
 
-	  sprintf(printBuffer,"%s ","setart reciving\n");
+	  sprintf(printBuffer,"setart reciving\n");
 	  send_USB(printBuffer);
+
+//	  serwoAngle(SS_LEWE, 140);
+//	  int itera = 0;
+
+
 
   while (1)
   {
 	  recive(printBuffer);
-//	  HAL_Delay(10);
-	  if(printBuffer != " ")
+
+
+	  switch((int)printBuffer[0])
 	  {
-		  send_USB(printBuffer);
-		  sprintf(printBuffer," ");
+	  case 88:
+	  {
+		  sprintf(printBuffer,"      ");
+		  recive(printBuffer);
+		  readed[0] = printBuffer[0];
+		  send_USB(readed);
+
+	  }break;
+	  case 90:
+	  {
+		  sprintf(printBuffer,"      ");
+		  sprintf(readed,"   ");
+		  recive(printBuffer);
+		  readed[1] = printBuffer[0];
+		  send_USB(readed);
+
+	  }break;
+	  default:
+		  break;
 	  }
+	  serwoControl((int8_t)readed[0], (int8_t)readed[1]);
+
+//	  if(printBuffer != " ")
+//	  {
+//
+//
+//
+//
+//		  send_USB(printBuffer);
+//		  sprintf(printBuffer," ");
+//	  }
+//	  HAL_Delay(10);
 //	  if(rea)
   }
 

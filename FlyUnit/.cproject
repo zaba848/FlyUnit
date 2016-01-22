@@ -288,6 +288,20 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.release.1175796944.2014238498" name="/" resourcePath="FlyUnit">
+						<toolChain id="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release.1818791573" name="Ac6 STM32 MCU GCC" superClass="fr.ac6.managedbuild.toolchain.gnu.cross.exe.release" unusedChildren="">
+							<option id="fr.ac6.managedbuild.option.gnu.cross.mcu.32030021.25687191" name="Mcu" superClass="fr.ac6.managedbuild.option.gnu.cross.mcu.32030021"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.board.1010525719.1105695589" name="Board" superClass="fr.ac6.managedbuild.option.gnu.cross.board.1010525719"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.fpu.1306288935.249300070" name="Floating point hardware" superClass="fr.ac6.managedbuild.option.gnu.cross.fpu.1306288935"/>
+							<option id="fr.ac6.managedbuild.option.gnu.cross.floatabi.466552088.1186596444" name="Floating-point ABI" superClass="fr.ac6.managedbuild.option.gnu.cross.floatabi.466552088"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1926256556" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.818769742"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1264351235" name="MCU G++ Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.compiler.1669876509"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1257236560" name="MCU GCC Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.linker.1183707611"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.1723438922" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.92188149"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.1083757605" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver.447897657"/>
+							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.1201133621" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.424217801"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="HAL_Driver"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Utilities"/>

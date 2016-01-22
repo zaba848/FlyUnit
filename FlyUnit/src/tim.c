@@ -33,8 +33,14 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "tim.h"
 
+#include <mxconstants.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <tim.h>
+
+//#include <cmath>
 
 
 /* USER CODE BEGIN 0 */
@@ -43,8 +49,8 @@
 
 TIM_HandleTypeDef htim3;
   TIM_OC_InitTypeDef sConfigOC;
-  uint8_t angL;
-  uint8_t angR;
+  uint16_t angL;
+  uint16_t angR;
 
 
 /* TIM3 init function */
@@ -54,9 +60,9 @@ void MX_TIM3_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 839;
+  htim3.Init.Prescaler = 74-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 2000;
+  htim3.Init.Period = 2000-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   HAL_TIM_Base_Init(&htim3);
 
@@ -73,15 +79,15 @@ void MX_TIM3_Init(void)
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
 
-//	80 140 200
-  sConfigOC.Pulse = 80;
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
+//		700	- 1600
+//  sConfigOC.Pulse = 80;
+//  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
 
 //  sConfigOC.Pulse = 102;
 //  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
 
-  sConfigOC.Pulse = 200;
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
+//  sConfigOC.Pulse = 200;
+//  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
 
 //  sConfigOC.Pulse = 152;
 //  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
@@ -90,7 +96,7 @@ void MX_TIM3_Init(void)
 
 }
 
-void serwoControl(int8_t X, int8_t Y)
+void serwoControl(int16_t X, int16_t Y)
 {
 	if(Y > 60)	// zabezpiecznie
 	{
@@ -105,22 +111,25 @@ void serwoControl(int8_t X, int8_t Y)
 	angL = (Y + 140)+X;
 	angR = ((Y * -1) + 140)+X;
 
-	if(angL > 200)	// zabezpiecznie
+	angL = abs(angL) *100;
+	angR = abs(angR) * 100;
+
+	if(angL > 1700)	// zabezpiecznie
 	{
-		angL = 200;
+		angL = 1700;
 	}else
-	if(angL < 80)
+	if(angL < 700)
 	{
-		angL = 80;
+		angL = 700;
 	}
 
-	if(angR > 200)	// zabezpiecznie
+	if(angR > 1700)	// zabezpiecznie
 	{
-		angR = 200;
+		angR = 1700;
 	}else
-	if(angR < 80)
+	if(angR < 700)
 	{
-		angR = 80;
+		angR = 700;
 	}
 
 	serwoAngle(SS_LEWE, angL);
@@ -128,23 +137,22 @@ void serwoControl(int8_t X, int8_t Y)
 }
 
 
-void serwoAngle(SSerwo serwo, int8_t angle)
+void serwoAngle(SSerwo serwo, uint16_t angle)
 {
-
 
 
 	switch(serwo)
 	{
 	case SS_LEWE:
 	{
-		sConfigOC.Pulse = angL;
+		sConfigOC.Pulse = angle;
 		HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
 	}break;
 	case SS_PRAWE:
 	{
-		sConfigOC.Pulse = angR;
+		sConfigOC.Pulse = angle;
 		HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
 		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
 

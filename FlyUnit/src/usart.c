@@ -70,7 +70,7 @@ void sendInt(uint8_t c[]) {
 
 }
 
-void reciveInt(uint8_t* c) {
+void reciveInt(uint8_t c[]) {
 	HAL_UART_Receive(&huart6, c, sizeof(uint8_t), 0xFFFF);
 }
 

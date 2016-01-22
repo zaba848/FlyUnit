@@ -57,6 +57,14 @@ extern DMA_HandleTypeDef hdma_usart6_rx;
 void MX_USART2_UART_Init(void);
 void MX_USART6_UART_Init(void);
 
+
+void send_USB(char c[]) ;
+void recive_USB(char c[]);
+void send(char c[]) ;
+void recive(char c[]);
+void sendInt(uint8_t c[]) ;
+void reciveInt(uint8_t c[]) ;
+
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */

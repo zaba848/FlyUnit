@@ -33,8 +33,12 @@ int main(void)
 
 
 
-  char printBuffer[20];
+  char printBuffer[10];
+  char rededCommand[5];
+//  uint8_t redBuffer[3];
+//  uint8_t redBufferBack[3];
   char readed[3];
+  uint8_t readedBack[3];
 //	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_ALL);
 //	HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_ALL);
 
@@ -44,8 +48,8 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
 //	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
 
-	uint8_t angleLeft = 0;
-	uint8_t angleRight = 0;
+//	uint8_t angleLeft = 5;
+//	uint8_t angleRight = 5;
 
 
 	  sprintf(printBuffer,"setart reciving\n");
@@ -54,48 +58,82 @@ int main(void)
 //	  serwoAngle(SS_LEWE, 140);
 //	  int itera = 0;
 
+	  readed[0] = 0;
+	  readed[1] = 0;
+	  readedBack[0] = 0;
+	  readedBack[1] = 0;
 
 
   while (1)
   {
-	  recive(printBuffer);
 
 
-	  switch((int)printBuffer[0])
+		recive(rededCommand);
+		send_USB(rededCommand);
+//	  send_USB(&rededCommand[0]);
+
+
+
+	  switch(rededCommand[0])
 	  {
-	  case 88:
+	  case 127:	// X
 	  {
-		  sprintf(printBuffer,"      ");
-		  recive(printBuffer);
-		  readed[0] = printBuffer[0];
-		  send_USB(readed);
+		  while((rededCommand[0] == 127))
+		  {
+
+
+			  recive(rededCommand);
+			if(rededCommand[0] == 126)
+			{
+
+				 readed[0] = readedBack[0];
+				 readed[1] = readedBack[1];
+				break;
+			}
+		  }
+		  if(rededCommand[0] != 126)
+		  readed[0] = rededCommand[0];
 
 	  }break;
-	  case 90:
+	  case 126:	// Y
 	  {
-		  sprintf(printBuffer,"      ");
-		  sprintf(readed,"   ");
-		  recive(printBuffer);
-		  readed[1] = printBuffer[0];
-		  send_USB(readed);
+		  while(rededCommand[0] == 126)
+		  {
+			  recive(rededCommand);
+
+				if(rededCommand[0] == 127)
+					{
+
+						 readed[0] = readedBack[0];
+						 readed[1] = readedBack[1];
+						break;
+					}
+		  }
+		  if(rededCommand[0] != 127)
+		  readed[1] = rededCommand[0];
 
 	  }break;
 	  default:
 		  break;
 	  }
-	  serwoControl((int8_t)readed[0], (int8_t)readed[1]);
+
+
+	  send_USB(readed);
+
+
+	  if ((readed[1] != readedBack[1]) || (readed[0] != readedBack[0])) {
+
+			readedBack[1] = readed[1];
+			readedBack[0] = readed[0];
+			if ((readed[1] != 0) && (readed[0] != 0))
+				serwoControl((int8_t) readed[0], (int8_t) readed[1]);
+		}
 
 //	  if(printBuffer != " ")
 //	  {
-//
-//
-//
-//
 //		  send_USB(printBuffer);
 //		  sprintf(printBuffer," ");
 //	  }
-//	  HAL_Delay(10);
-//	  if(rea)
   }
 
 }
@@ -116,7 +154,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 84;
+  RCC_OscInitStruct.PLL.PLLN = 74;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   HAL_RCC_OscConfig(&RCC_OscInitStruct);
@@ -135,7 +173,6 @@ void SystemClock_Config(void)
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
-
 #ifdef USE_FULL_ASSERT
 
 void assert_failed(uint8_t* file, uint32_t line)

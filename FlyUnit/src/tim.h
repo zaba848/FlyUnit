@@ -49,13 +49,13 @@
 
 extern TIM_HandleTypeDef htim3;
 TIM_OC_InitTypeDef sConfigOC;
-uint8_t angL;
-uint8_t angR;
+uint16_t angL;
+uint16_t angR;
 
 
 void MX_TIM3_Init(void);
-void serwoAngle(SSerwo serwo, int8_t angle);
-void serwoControl(int8_t X, int8_t Y);
+void serwoAngle(SSerwo serwo, uint16_t angle);
+void serwoControl(int16_t X, int16_t Y);
 
 
 #ifdef __cplusplus
